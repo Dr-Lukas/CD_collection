@@ -20,7 +20,7 @@ def generate_and_save_items(
                 f"Fetched {len(fetched_items)} items with genre: {genre}, price range: {price_min} - {price_max}, offset: {offset}"
             )
 
-            offset += 96
+            offset += 96 #TODO add this to config
 
         else:
             print(
