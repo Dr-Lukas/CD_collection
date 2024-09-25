@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
-import yaml
 
 
 def web_driver(url: str, sleep_time: int = 2) -> str:
@@ -48,14 +47,3 @@ def get_genres_from_html(html: str) -> dict:
             filters[title] = options
 
     return filters
-
-
-if __name__ == "__main__":
-    with open("extract/config/config.yaml", "r") as yaml_file:
-        config = yaml.safe_load(yaml_file)
-
-    url = config["scraper"]["url"]
-
-    raw_html = web_driver(url)
-
-    filters = get_genres_from_html(raw_html)
