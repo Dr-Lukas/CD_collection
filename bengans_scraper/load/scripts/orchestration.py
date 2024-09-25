@@ -1,11 +1,10 @@
 import requests
-from extract.scripts.scraper import fetch_items
-from loader import save_items_to_csv
+from bengans_scraper.extract import fetch_data
+from . import loader
 
 
 def generate_and_save_items(
     session: requests.sessions.Session,
-    items: list,
     filter_parm: str,
     offset: int,
     price_min: int,
@@ -14,10 +13,9 @@ def generate_and_save_items(
     output_path: str,
 ):
     while True:
-        fetched_items = fetch_items(session, filter_parm, offset)
+        fetched_items = fetch_data.fetch_items(session, filter_parm, offset)
 
         if fetched_items:
-            items.extend(fetched_items)
             print(
                 f"Fetched {len(fetched_items)} items with genre: {genre}, price range: {price_min} - {price_max}, offset: {offset}"
             )
@@ -30,6 +28,5 @@ def generate_and_save_items(
             )
             break
 
-        if items:
-            save_items_to_csv(items, output_path)
-            items.clear()
+        if fetched_items:
+            loader.save_items_to_csv(fetched_items, output_path)

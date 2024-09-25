@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "bengans-scraper"
+version = "0.1.0"
+description = "scrapes bengans.com and their available products"
+authors = ["Dr-Lukas <l.drazdys@gmail.com>"]
+license = "gpl"
+readme = "README.md"
+packages = [
+    { include = "bengans_scraper" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+bs4 = "^0.0.2"
+requests = "^2.32.3"
+pydantic = "^2.9.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+scrape = "vod_export.qa_results:main"

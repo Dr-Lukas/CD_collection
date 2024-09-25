@@ -1,12 +1,13 @@
 import requests
-from parser import extract_items_from_html
-from transform.scripts.filter_parm_handler import create_filter_param
+from bengans_scraper.transform import item_parser, filter_parm_handler
 
 
 def generate_url(
     base_url: str, price_min: int, price_max: int, genre: str, label=""
 ) -> str:
-    filter_params = create_filter_param(price_min, price_max, genre, label)
+    filter_params = filter_parm_handler.create_filter_param(
+        price_min, price_max, genre, label
+    )
     complete_url = f"{base_url}#{filter_params}"
     return complete_url
 
@@ -37,6 +38,6 @@ def fetch_items(
         },
     )
 
-    items_from_html = extract_items_from_html(response.text)
+    items_from_html = item_parser.extract_items_from_html(response.text)
 
     return items_from_html

@@ -1,3 +1,5 @@
 scraper:
   url: "https://www.bengans.com/en/artiklar/cd/index.html"
   category: "CD"
+loader:
+  path: "path"
