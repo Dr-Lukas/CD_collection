@@ -14,6 +14,9 @@ python = "^3.11"
 bs4 = "^0.0.2"
 requests = "^2.32.3"
 pydantic = "^2.9.2"
+selenium = "^4.25.0"
+datetime = "^5.5"
+pathlib = "^1.0.1"
 
 
 [build-system]

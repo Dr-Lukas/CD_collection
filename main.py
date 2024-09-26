@@ -1,7 +1,6 @@
 import requests
 from bengans_scraper.extract import web_driver, fetch_data
 from bengans_scraper.transform import filter_parm_handler, item_parser
-import requests
 from datetime import datetime
 from bengans_scraper.load import orchestration, loader
 import os
