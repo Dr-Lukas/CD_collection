@@ -1,5 +1,9 @@
-scraper:
+Scraper:
   url: "https://www.bengans.com/en/artiklar/cd/index.html"
   category: "CD"
-loader:
-  path: "path"
+  price_min: 0.99
+  price_max: 600.00
+  batch_size: 96
+Loader:
+  filename: "fetched_products.csv"
+  path: "bengans_scraper/load/data/"
