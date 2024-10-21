@@ -2,7 +2,7 @@ import json
 import urllib.parse
 
 
-def create_filter_param(price_min: int, price_max: int, genre: str, label="") -> str:
+def create_filter_param(price_min: int, price_max: int, genre: str, label: str = "") -> str:
     filter_dict = {
         "F85": genre,
         "FPris": f"{price_min:.2f}--{price_max:.2f}",

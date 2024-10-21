@@ -24,6 +24,7 @@ class Scraper(BaseModel):
 
 class Loader(BaseModel):
     """Defines path where data is being loaded"""
+    filename: str = "fetched_products.csv"
     path: str = "bengans_scraper/load/data/"
 
 class BengansScraper(BaseModel):

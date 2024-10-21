@@ -19,7 +19,7 @@ def web_driver(url: str, sleep_time: int = 2) -> str:
     return page_raw_data
 
 
-def get_genres_from_html(html: str) -> dict:
+def get_filters_from_html(html: str) -> dict:
     soup = BeautifulSoup(html, "html.parser")
 
     filter_section = soup.find_all("div", class_="FilterWrapper")

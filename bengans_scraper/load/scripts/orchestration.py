@@ -11,7 +11,7 @@ def generate_and_save_items(
     price_max: int,
     genre: str,
     output_path: str,
-):
+) -> GeneratorExit:
     while True:
         fetched_items = fetch_data.fetch_items(session, filter_parm, offset)
 
