@@ -1,7 +1,7 @@
 import csv
+from bengans_scraper.models import data_model
 
-
-def save_items_to_csv(items: list, filename: str) -> None:
+def save_items_to_csv(items: list[data_model.BengansProducts], filename: str) -> None:
     csv_columns = [
         "product_name",
         "band_name",
@@ -19,7 +19,7 @@ def save_items_to_csv(items: list, filename: str) -> None:
 
             if file.tell() == 0:
                 writer.writeheader()
-
-            writer.writerows(items)
+            for item in items:
+                writer.writerow(item.model_dump())
     except IOError:
         print("I/O error while writing to CSV")

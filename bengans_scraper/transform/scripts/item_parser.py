@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
+from bengans_scraper.models import data_model
 
 
-def extract_items_from_html(html_text: str) -> list:
+def extract_items_from_html(html_text: str) -> list[data_model.BengansProducts]:
     soup = BeautifulSoup(html_text, "html.parser")
 
     product_wrappers = soup.find_all("div", class_="PT_Wrapper")
@@ -23,17 +24,17 @@ def extract_items_from_html(html_text: str) -> list:
         normal_price_tag = price_tag.find("span", class_="PT_PrisNormal")
 
         discounted_price = (
-            discounted_price_tag.get_text(strip=True).replace("€", "")
+            float(discounted_price_tag.get_text(strip=True).replace("€", ""))
             if discounted_price_tag
             else None
         )
         original_price = (
-            original_price_tag.get_text(strip=True).replace("€", "")
+            float(original_price_tag.get_text(strip=True).replace("€", ""))
             if original_price_tag
             else None
         )
         price = (
-            normal_price_tag.get_text(strip=True).replace("€", "")
+            float(normal_price_tag.get_text(strip=True).replace("€", ""))
             if normal_price_tag
             else original_price
         )
@@ -53,17 +54,18 @@ def extract_items_from_html(html_text: str) -> list:
         product_link_tag = product.find("a", class_="info-link")
         product_link = product_link_tag["href"] if product_link_tag else None
 
-        items.append(
-            {
-                "product_name": product_name,
-                "band_name": band_name,
-                "discounted_price": discounted_price,
-                "original_price": original_price,
-                "current_price": discounted_price if discounted_price else price,
-                "status": status,
-                "media_format": media_format,
-                "product_link": product_link,
-            }
+        product = data_model.BengansProducts(
+            product_name=product_name,
+            band_name=band_name,
+            discounted_price=discounted_price,
+            original_price=original_price,
+            current_price=discounted_price if discounted_price else price,
+            status=status,
+            media_format=media_format,
+            product_link=product_link,
         )
+
+        items.append(product)
+
 
     return items

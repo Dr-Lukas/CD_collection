@@ -1,12 +1,14 @@
-import requests
-from typing import Tuple
-from bengans_scraper.extract import web_driver, fetch_data
-from bengans_scraper.transform import filter_parm_handler
-from datetime import datetime
-from bengans_scraper.load import orchestration, loader
-from config import BengansScraper, load_config
 import os
 import pathlib
+import requests
+from typing import Tuple
+from datetime import datetime
+from bengans_scraper.extract import web_driver, fetch_data
+from bengans_scraper.transform import filter_parm_handler
+from bengans_scraper.models import data_model
+from bengans_scraper.load import orchestration, loader
+from config import BengansScraper, load_config
+
 
 
 def handle_full_batch(
@@ -48,7 +50,7 @@ def single_offset(
     genre: str,
     session: requests.sessions.Session,
     offset: int,
-) -> list:
+) -> list[data_model.BengansProducts]:
     filter_parm = filter_parm_handler.create_filter_param(price_min, price_max, genre)
     items = fetch_data.fetch_items(session, filter_parm, offset)
 
@@ -60,7 +62,7 @@ def process_genre(
     session: requests.sessions.Session,
     config: BengansScraper,
     output_dir: str,
-) -> GeneratorExit:
+) -> None:
     """Process each genre item and fetch/save data accordingly."""
     genre = genre_item.get("value")
     match_count = int(genre_item["match_count"])
