@@ -7,3 +7,7 @@ Scraper:
 Loader:
   filename: "fetched_products.csv"
   path: "bengans_scraper/load/data/"
+BigQuery:
+  project_id: "bengans-store"
+  dataset_id: "bengans"
+  table_id: "products"

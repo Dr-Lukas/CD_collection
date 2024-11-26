@@ -5,8 +5,8 @@ from typing import Tuple
 from datetime import datetime
 from bengans_scraper.extract import web_driver, fetch_data
 from bengans_scraper.transform import filter_parm_handler
-from bengans_scraper.models import data_model
-from bengans_scraper.load import orchestration, loader
+from bengans_scraper.models import data_model_schema
+from bengans_scraper.load import orchestration, loader, bigquery_connections
 from config import BengansScraper, load_config
 
 
@@ -19,9 +19,10 @@ def handle_full_batch(
     genre: str,
     output_path: str,
     url: str,
+    my_table: bigquery_connections.BigQueryTable
 ) -> Tuple[float, bool]:
     """Handle the case where the number of fetched items matches the batch_size."""
-    if price_min >= float(items[-1]["current_price"]) - 0.01:
+    if price_min >= float(items[-1].current_price) - 0.01:
         price_max = price_min
         url_filtered = fetch_data.generate_url(url, price_min, price_max, genre)
         raw_html_filtered = web_driver.web_driver(url_filtered, sleep_time=5)
@@ -34,12 +35,12 @@ def handle_full_batch(
                 price_min, price_max, genre, label
             )
             orchestration.generate_and_save_items(
-                session, filter_parm, 0, price_min, price_max, genre, output_path
+                session, filter_parm, 0, price_min, price_max, genre, output_path, my_table
             )
 
     else:
         print(f"Max offset returned batch size items, reducing price range.")
-        return float(items[-1]["current_price"]) - 0.01, False
+        return float(items[-1].current_price) - 0.01, False
 
     return price_max, True
 
@@ -50,7 +51,7 @@ def single_offset(
     genre: str,
     session: requests.sessions.Session,
     offset: int,
-) -> list[data_model.BengansProducts]:
+) -> list[data_model_schema.BengansProducts]:
     filter_parm = filter_parm_handler.create_filter_param(price_min, price_max, genre)
     items = fetch_data.fetch_items(session, filter_parm, offset)
 
@@ -62,6 +63,7 @@ def process_genre(
     session: requests.sessions.Session,
     config: BengansScraper,
     output_dir: str,
+    my_table: bigquery_connections.BigQueryTable
 ) -> None:
     """Process each genre item and fetch/save data accordingly."""
     genre = genre_item.get("value")
@@ -80,7 +82,8 @@ def process_genre(
             print(
                 f"Fetched {len(items)} items with genre: {genre}, price range: {price_min} - {price_max}"
             )
-            loader.save_items_to_csv(items, output_path)
+            # loader.save_items_to_csv(items, output_path)
+            my_table.upload_data(items)
 
         return
 
@@ -98,6 +101,7 @@ def process_genre(
                 genre,
                 output_path,
                 config.Scraper.url,
+                my_table
             )
 
         else:
@@ -105,7 +109,7 @@ def process_genre(
                 price_min, price_max, genre
             )
             orchestration.generate_and_save_items(
-                session, filter_parm, 0, price_min, price_max, genre, output_path
+                session, filter_parm, 0, price_min, price_max, genre, output_path, my_table
             )
 
             set_new_price = True
@@ -115,7 +119,7 @@ def process_genre(
             price_max += 10
 
 
-def dynamic_load_and_save(config: BengansScraper) -> None:
+def dynamic_load_and_save(config: BengansScraper, my_table: bigquery_connections.BigQueryTable) -> None:
     url = config.Scraper.url
     output_dir = os.path.join(config.Loader.path, datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(output_dir, exist_ok=True)
@@ -130,12 +134,17 @@ def dynamic_load_and_save(config: BengansScraper) -> None:
         raise Exception("Genres were not retrieved")
 
     for genre_item in genre_list:
-        process_genre(genre_item, session, config, output_dir)
+        process_genre(genre_item, session, config, output_dir, my_table)
 
 
 def main(config_path: pathlib.Path) -> None:
     config = load_config(config_path)
-    dynamic_load_and_save(config)
+    my_table = bigquery_connections.BigQueryTable(
+        config, data_model_schema.BengansProducts
+    )
+    if not my_table.table_exists():
+        my_table.create_table()
+    dynamic_load_and_save(config, my_table)
 
 
 if __name__ == "__main__":

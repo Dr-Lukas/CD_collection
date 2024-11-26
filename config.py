@@ -27,10 +27,17 @@ class Loader(BaseModel):
     filename: str = "fetched_products.csv"
     path: str = "bengans_scraper/load/data/"
 
+class BigQuery(BaseModel):
+    """Defines credentials and tables for bigquery"""
+    project_id: str = "bengans-store"
+    dataset_id: str = "bengans"
+    table_id: str = "products"
+
 class BengansScraper(BaseModel):
     """Defines how we query and store info related to a bengans website"""
     Scraper: Scraper
     Loader: Loader
+    BigQuery: BigQuery
 
 
 def load_config(config_path: pathlib.Path) -> BengansScraper:

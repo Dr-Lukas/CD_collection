@@ -1,6 +1,6 @@
 import requests
 from bengans_scraper.transform import item_parser, filter_parm_handler
-from bengans_scraper.models import data_model
+from bengans_scraper.models import data_model_schema
 
 def generate_url(
     base_url: str, price_min: int, price_max: int, genre: str, label=""
@@ -14,7 +14,7 @@ def generate_url(
 
 def fetch_items(
     session: requests.sessions.Session, filter_parm: str, offset: int
-) -> list[data_model.BengansProducts]:
+) -> list[data_model_schema.BengansProducts]:
     response = session.post(
         "https://www.bengans.com/shop",
         data={

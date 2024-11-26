@@ -1,7 +1,7 @@
 import csv
-from bengans_scraper.models import data_model
+from bengans_scraper.models import data_model_schema
 
-def save_items_to_csv(items: list[data_model.BengansProducts], filename: str) -> None:
+def save_items_to_csv(items: list[data_model_schema.BengansProducts], filename: str) -> None:
     csv_columns = [
         "product_name",
         "band_name",

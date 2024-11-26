@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
-from bengans_scraper.models import data_model
+from bengans_scraper.models import data_model_schema
 
 
-def extract_items_from_html(html_text: str) -> list[data_model.BengansProducts]:
+def extract_items_from_html(html_text: str) -> list[data_model_schema.BengansProducts]:
     soup = BeautifulSoup(html_text, "html.parser")
 
     product_wrappers = soup.find_all("div", class_="PT_Wrapper")
@@ -54,7 +54,7 @@ def extract_items_from_html(html_text: str) -> list[data_model.BengansProducts]:
         product_link_tag = product.find("a", class_="info-link")
         product_link = product_link_tag["href"] if product_link_tag else None
 
-        product = data_model.BengansProducts(
+        product = data_model_schema.BengansProducts(
             product_name=product_name,
             band_name=band_name,
             discounted_price=discounted_price,
